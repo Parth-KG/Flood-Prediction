@@ -118,8 +118,22 @@ def rolling_origin_evaluation(
     X_all = df[selected].to_numpy(dtype=float)
     y_all = df[target].to_numpy(dtype=float)
 
-    tscv = TimeSeriesSplit(n_splits=n_splits)
-    folds = list(tscv.split(X_all))
+    # Year-boundary windows: cut on whole years, not row positions, so no
+    # single year (and therefore no flood event) appears in both train and test.
+    years = df["year"].to_numpy()
+    uniq = np.sort(np.unique(years))
+    # choose n_splits evenly spaced cut years across the second half of the record
+    cut_years = uniq[len(uniq) // 3:]  # start after the first third
+    edges = np.linspace(0, len(cut_years) - 1, n_splits + 1).astype(int)
+    cuts = [int(cut_years[e]) for e in edges]
+
+    folds = []
+    for k in range(n_splits):
+        tr_end, te_end = cuts[k], cuts[k + 1]
+        tr = np.where(years <= tr_end)[0]
+        te = np.where((years > tr_end) & (years <= te_end))[0]
+        if len(tr) >= 50 and len(te) >= 10:
+            folds.append((tr, te))
 
     print(f"\nRolling-origin evaluation: {n_splits} expanding windows")
     if "year" in df.columns:

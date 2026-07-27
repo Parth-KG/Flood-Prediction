@@ -1,0 +1,104 @@
+Dataset loaded: 5704 rows, 40 columns
+Sorted chronologically by ['year', 'date']
+Splitting at year 2013
+
+VIF scores (rainfall features):
+feature      VIF
+    21d 2.827728
+    22d 2.820894
+    17d 2.671954
+     2d 2.526647
+    19d 2.504244
+    18d 2.364052
+    20d 2.342374
+    13d 2.183063
+     1d 2.100691
+    16d 2.028268
+    10d 1.829314
+    29d 1.754632
+    26d 1.749509
+     7d 1.734989
+    25d 1.721173
+     4d 1.703401
+     6d 1.663516
+    15d 1.651073
+     5d 1.620689
+    23d 1.598678
+    28d 1.586161
+    27d 1.581998
+    12d 1.534839
+    14d 1.484142
+    11d 1.479195
+     3d 1.417813
+     9d 1.396926
+     8d 1.388111
+    24d 1.327414
+     0d 1.144268
+population    0.424563
+area          0.101828
+slope         0.031318
+2d            0.021091
+1d            0.020687
+3d            0.017848
+17d           0.017684
+22d           0.016518
+9d            0.016312
+29d           0.015603
+16d           0.015341
+8d            0.015173
+27d           0.015056
+11d           0.014870
+24d           0.014492
+13d           0.014301
+7d            0.014203
+18d           0.014001
+0d            0.013771
+14d           0.013758
+dtype: float64
+
+Mutual Information scores (top 20):
+population    0.294132
+slope         0.095859
+area          0.023105
+22d           0.022049
+3d            0.019653
+5d            0.016450
+17d           0.012257
+0d            0.012009
+21d           0.010347
+4d            0.009324
+2d            0.008457
+11d           0.007505
+20d           0.006857
+rivCd         0.005481
+wsysCd        0.005358
+27d           0.003311
+18d           0.002725
+12d           0.001794
+24d           0.000108
+8d            0.000000
+dtype: float64
+  RF top-half: 17 | MI top-half: 17 | consensus: 9
+
+Final feature set: 11 features
+
+Rolling-origin evaluation: 5 expanding windows
+  window 1: train  3168 rows (<= 2002) | test   470 rows (2003-2005)
+  window 2: train  3638 rows (<= 2005) | test   466 rows (2006-2008)
+  window 3: train  4104 rows (<= 2008) | test   426 rows (2009-2012)
+  window 4: train  4530 rows (<= 2012) | test   436 rows (2013-2016)
+  window 5: train  4966 rows (<= 2016) | test   738 rows (2017-2020)
+
+Rolling-origin results (mean +/- std across windows)
+  XGBoost            RMSE 0.728 +/- 0.076   MAE 0.564 +/- 0.068   R2 0.394 +/- 0.077
+  Random Forest      RMSE 0.729 +/- 0.077   MAE 0.564 +/- 0.067   R2 0.391 +/- 0.087
+  DNN                RMSE 0.748 +/- 0.071   MAE 0.580 +/- 0.061   R2 0.360 +/- 0.072
+  SVR                RMSE 0.795 +/- 0.057   MAE 0.621 +/- 0.052   R2 0.277 +/- 0.067
+  Linear Regression  RMSE 0.864 +/- 0.063   MAE 0.679 +/- 0.057   R2 0.146 +/- 0.081
+
+Wrote results_rolling_origin.csv
+
+XGBoost vs Random Forest: RMSE gap 0.0011, window-to-window std 0.0766
+  -> gap is smaller than fold-to-fold variation. Section 5.3
+     should not claim boosting beats bagging on this dataset;
+     report them as statistically indistinguishable.
