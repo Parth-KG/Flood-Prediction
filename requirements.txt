@@ -1,18 +1,27 @@
-# Python 3.10-3.12 (developed on 3.12)
+# Python 3.12
 # Install:  pip install -r requirements.txt
 #
-# Note: build the virtualenv on a standalone Python, not on a conda
-# interpreter. A venv layered over conda inherits conda's OpenMP/BLAS
-# libraries, which clash with the ones bundled in the TensorFlow and
-# XGBoost wheels and segfault on import (macOS especially).
+# Versions are pinned exactly. The results reported in the accompanying paper
+# were produced with this environment.
+#
+# scipy is pinned explicitly even though it arrives as a scikit-learn
+# dependency. It supplies the LAPACK bindings used by LinearRegression, and the
+# design matrix here is close to rank deficient (condition number ~4.9e7), so
+# the linear regression baseline shifts slightly between scipy builds. The other
+# four models are unaffected.
+#
+# Build the virtualenv on a standalone Python, not on a conda interpreter.
+# A venv layered over conda inherits conda's OpenMP/BLAS libraries, which clash
+# with the ones bundled in the TensorFlow and XGBoost wheels and segfault on
+# import (macOS especially).
 
-numpy>=1.26
-pandas>=2.1
-scikit-learn>=1.4
-xgboost>=2.0
-tensorflow>=2.16        # Apple Silicon is supported by this package from 2.16;
-                        # the old tensorflow-macos package is retired.
-statsmodels>=0.14       # variance inflation factors in feature_selection.py
-matplotlib>=3.8
-seaborn>=0.13
-openpyxl>=3.1           # reads dataset/data_structures.xlsx
+numpy==2.5.1
+pandas==3.0.5
+scipy==1.18.0
+scikit-learn==1.9.0
+xgboost==3.3.0
+tensorflow==2.21.0
+keras==3.15.0
+statsmodels==0.14.6      # variance inflation factors in feature_selection.py
+matplotlib==3.11.1
+seaborn==0.13.2
