@@ -5,23 +5,10 @@ message: >-
   dataset (Wakai 2025, doi:10.5281/zenodo.14015790).
 type: software
 authors:
-  - given-names: Parth Krishan
-    family-names: Goswami
-    affiliation: Maharaja Surajmal Institute of Technology, GGSIPU
-  - given-names: Aarushi
-    family-names: Sen
-    affiliation: Maharaja Surajmal Institute of Technology, GGSIPU
-  - given-names: Soahum
-    family-names: Trivedi
-    affiliation: Maharaja Surajmal Institute of Technology, GGSIPU
-  - given-names: Jyoti
-    family-names: Arora
-    affiliation: Maharaja Surajmal Institute of Technology, GGSIPU
+  - name: Maharaja Surajmal Institute of Technology, GGSIPU
+    city: New Delhi
+    country: IN
 repository-code: https://github.com/Parth-KG/Flood-Prediction
-identifiers:
-  - type: doi
-    value: 10.5281/zenodo.20084689
-    description: Preprint of the accompanying manuscript
 abstract: >-
   Comparison of five regression models - Random Forest, XGBoost, SVR,
   a deep neural network and linear regression - for predicting per-capita
@@ -38,19 +25,3 @@ keywords:
 license: MIT
 version: 1.1.0
 date-released: 2026-07-27
-preferred-citation:
-  type: article
-  title: >-
-    A Head-to-Head Study of Ensemble and Deep Learning Algorithms
-    for Flood Damage Prediction in Japan
-  authors:
-    - given-names: Parth Krishan
-      family-names: Goswami
-    - given-names: Aarushi
-      family-names: Sen
-    - given-names: Soahum
-      family-names: Trivedi
-    - given-names: Jyoti
-      family-names: Arora
-  year: 2026
-  doi: 10.5281/zenodo.20084689

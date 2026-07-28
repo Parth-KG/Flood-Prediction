@@ -238,9 +238,8 @@ variation.
 If you use this code, please cite both the software and the underlying dataset:
 
 ```bibtex
-@software{goswami_flood_prediction,
-  author = {Goswami, Parth Krishan and Sen, Aarushi and
-            Trivedi, Soahum and Arora, Jyoti},
+@software{flood_prediction_kanto,
+  author = {{Maharaja Surajmal Institute of Technology}},
   title  = {Flood Damage Prediction for the Kanto Region, Japan},
   year   = {2026},
   doi    = {10.5281/zenodo.20084689},
@@ -268,8 +267,3 @@ The dataset in `dataset/` is redistributed under
 of Wakai (2025); attribution as above.
 
 ---
-
-## Authors
-
-Parth Krishan Goswami, Aarushi Sen, Soahum Trivedi, Jyoti Arora
-Maharaja Surajmal Institute of Technology, GGSIPU, New Delhi, India
