@@ -1,27 +1,21 @@
 cff-version: 1.2.0
-title: Flood Damage Prediction for the Kanto Region, Japan
-message: >-
-  If you use this software, please cite it and the underlying
-  dataset (Wakai 2025, doi:10.5281/zenodo.14015790).
+message: "If you use this software, please cite the paper below."
+title: "Flood-Prediction: ensemble and deep learning benchmarks for flood damage prediction in Japan"
 type: software
 authors:
-  - name: Maharaja Surajmal Institute of Technology, GGSIPU
-    city: New Delhi
-    country: IN
-repository-code: https://github.com/Parth-KG/Flood-Prediction
-abstract: >-
-  Comparison of five regression models - Random Forest, XGBoost, SVR,
-  a deep neural network and linear regression - for predicting per-capita
-  flood damage across 75 water systems in the Kanto region of Japan,
-  1993-2020, using chronological and rolling-origin validation.
-keywords:
-  - flood damage prediction
-  - machine learning
-  - XGBoost
-  - random forest
-  - temporal validation
-  - rolling-origin evaluation
-  - Kanto region
+  - family-names: Goswami
+    given-names: Parth Krishan
+    orcid: "https://orcid.org/0009-0004-8674-6002"
+repository-code: "https://github.com/Parth-KG/Flood-Prediction"
 license: MIT
-version: 1.1.0
-date-released: 2026-07-27
+preferred-citation:
+  type: article
+  title: "A Head-to-Head Study of Ensemble and Deep Learning Algorithms for Flood Damage Prediction in Japan"
+  authors:
+    - family-names: Goswami
+      given-names: Parth Krishan
+      orcid: "https://orcid.org/0009-0004-8674-6002"
+    - family-names: Arora
+      given-names: Jyoti
+  year: 2026
+  doi: "10.5281/zenodo.20084689"
