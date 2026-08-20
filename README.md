@@ -100,7 +100,7 @@ rolling_origin_evaluation(df, sel, TARGET, out_csv='results_rolling_origin.csv')
 │   ├── data_structures.xlsx   variable dictionary
 │   └── readme.docx            dataset documentation
 ├── assets/                    figures and results used in the manuscript,
-│                              including rolling_rerun.txt (the rolling-origin log)
+│                              including run_log.txt (the full pipeline log)
 ├── requirements.txt
 └── README.md
 ```
@@ -191,6 +191,12 @@ remaining order — RF ranks population, area, slope while mutual information
 ranks population, slope, area — which is what makes requiring agreement more
 informative than either ranking alone.
 
+<p align="center">
+  <img src="assets/feature_importance_rf.png" width="90%" alt="Random Forest feature importances, top 20">
+</p>
+
+<sub>Random Forest importances, top 20. The mutual-information ranking that has to agree with it is in <code>assets/run_log.txt</code>.</sub>
+
 Scaling (`MinMaxScaler`) is fitted on training rows only, and refitted inside
 each rolling-origin window. Hyperparameters for Random Forest, XGBoost and SVR
 come from a 30-iteration `RandomizedSearchCV` using five-fold `TimeSeriesSplit`.
@@ -213,9 +219,9 @@ Running `main.py` writes to the working directory:
 | `dnn_training_history.png` | DNN loss and MAE curves |
 
 All figures render at 300 dpi. Copies of the versions used in the manuscript are
-in `assets/`, together with `rolling_rerun.txt` — the console log of the
-rolling-origin evaluation, including the VIF table, both feature rankings and
-the per-window row counts.
+in `assets/`, together with `run_log.txt` — the console log of a full pipeline
+run, including the VIF table, both feature rankings, and the rolling-origin
+windows with their per-window row counts.
 
 ---
 
