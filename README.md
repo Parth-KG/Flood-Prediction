@@ -1,7 +1,7 @@
 # Flood Damage Prediction — Kanto Region, Japan
 
 Comparing five regression models on per-capita flood damage across 28 years of
-Japanese flood records (1993–2020), with time-aware validation throughout.
+Kanto flood records (1993–2020), with time-aware validation throughout.
 
 Accompanies the manuscript *"A Head-to-Head Study of Ensemble and Deep Learning
 Algorithms for Flood Damage Prediction in Japan"* (under revision, ICDPN 2026).
