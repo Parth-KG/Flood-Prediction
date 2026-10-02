@@ -4,7 +4,7 @@ Comparing five regression models on per-capita flood damage across 28 years of
 Kanto flood records (1993–2020), with time-aware validation throughout.
 
 Accompanies the manuscript *"A Head-to-Head Study of Ensemble and Deep Learning
-Algorithms for Flood Damage Prediction in Japan"* (under revision, ICDPN 2026).
+Algorithms for Flood Damage Prediction in Japan"* (under revision, PAUL 2026).
 
 ---
 
