@@ -14,11 +14,11 @@ Chronological holdout — trained on 1993–2012, tested on 2013–2020 (1174 ev
 
 | Model             |  RMSE           |  MAE            |  R²             |
 |-------------------|-----------------|-----------------|-----------------|
-| XGBoost           | **0.802**       | **0.632**       | **0.372**       |
-| Random Forest     | 0.806           | 0.633           | 0.365           |
-| Deep Neural Net   | 0.837 ± 0.002   | 0.655 ± 0.002   | 0.316 ± 0.003   |
-| SVR               | 0.863           | 0.684           | 0.273           |
-| Linear Regression | 0.924           | 0.734           | 0.168           |
+| XGBoost           | **0.805**       | 0.634           | **0.368**       |
+| Random Forest     | 0.807           | **0.633**       | 0.364           |
+| Deep Neural Net   | 0.838 ± 0.008   | 0.655 ± 0.007   | 0.315 ± 0.012   |
+| SVR               | 0.850           | 0.670           | 0.295           |
+| Linear Regression | 0.930           | 0.741           | 0.156           |
 
 Rolling-origin validation — five expanding windows, mean ± std across windows:
 
@@ -26,17 +26,24 @@ Rolling-origin validation — five expanding windows, mean ± std across windows
 |-------------------|-------------------|-------------------|-------------------|
 | XGBoost           | **0.728 ± 0.076** | **0.564 ± 0.068** | **0.394 ± 0.077** |
 | Random Forest     | 0.729 ± 0.077     | 0.564 ± 0.067     | 0.391 ± 0.087     |
-| Deep Neural Net   | 0.748 ± 0.071     | 0.580 ± 0.061     | 0.360 ± 0.072     |
+| Deep Neural Net   | 0.753 ± 0.067     | 0.584 ± 0.060     | 0.350 ± 0.076     |
 | SVR               | 0.795 ± 0.057     | 0.621 ± 0.052     | 0.277 ± 0.067     |
 | Linear Regression | 0.864 ± 0.063     | 0.679 ± 0.057     | 0.146 ± 0.081     |
 
 The DNN row is averaged over five random seeds; the other models are
 deterministic single fits.
 
+The holdout table gives the figures in the revised manuscript (under revision,
+PAUL 2026). The code in this repository reproduces the XGBoost and linear
+regression holdout rows and the whole rolling-origin table (see
+`assets/run_log.txt`). The revision's wider SVR search (60 iterations) and its
+added checks, whole water systems held out and paired significance tests, will
+be added here after the review.
+
 **XGBoost and Random Forest are statistically indistinguishable.** They finish
-in the same order under both protocols, but the margin is meaningless: 0.004
-RMSE on the holdout and 0.001 under rolling-origin, against a window-to-window
-standard deviation of 0.077. The separation that *is* stable is the one between
+in the same order under both protocols, but the margin is meaningless: 0.0025
+RMSE on the holdout (Diebold–Mariano p = 0.45) and 0.001 under rolling-origin,
+against a window-to-window standard deviation of 0.077. The separation that *is* stable is the one between
 the two tree ensembles and everything below them, which holds across all five
 windows and both protocols. Neither ensemble should be claimed as the winner.
 
@@ -241,15 +248,18 @@ variation.
 
 ## Citation
 
-If you use this code, please cite both the software and the underlying dataset:
+If you use this code, please cite the preprint and the underlying dataset:
 
 ```bibtex
-@software{flood_prediction_kanto,
-  author = {{Maharaja Surajmal Institute of Technology}},
-  title  = {Flood Damage Prediction for the Kanto Region, Japan},
-  year   = {2026},
-  doi    = {10.5281/zenodo.20084689},
-  url    = {https://github.com/Parth-KG/Flood-Prediction}
+@misc{goswami_arora_2026,
+  author    = {Goswami, Parth Krishan and Arora, Jyoti},
+  title     = {A Head-to-Head Study of Ensemble and Deep Learning Algorithms
+               for Flood Damage Prediction in Japan},
+  year      = {2026},
+  publisher = {Zenodo},
+  note      = {Preprint},
+  doi       = {10.5281/zenodo.20084689},
+  url       = {https://github.com/Parth-KG/Flood-Prediction}
 }
 
 @dataset{wakai_2025,
