@@ -21,15 +21,3 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
 ---
-
-NOTE ON DATA
-
-The contents of the dataset/ directory are NOT covered by the above licence.
-They are redistributed from the Zenodo repository accompanying:
-
-  Wakai, A. (2025). Historical precipitation and flood damage in Japan:
-  functional data analysis and evaluation of models. Zenodo.
-  https://doi.org/10.5281/zenodo.14015790
-
-and remain licensed under Creative Commons Attribution 4.0 International
-(CC BY 4.0): https://creativecommons.org/licenses/by/4.0/
