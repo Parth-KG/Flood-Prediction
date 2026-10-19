@@ -9,13 +9,30 @@ authors:
 repository-code: "https://github.com/Parth-KG/Flood-Prediction"
 license: MIT
 preferred-citation:
-  type: article
+  type: conference-paper
   title: "A Head-to-Head Study of Ensemble and Deep Learning Algorithms for Flood Damage Prediction in Japan"
   authors:
     - family-names: Goswami
       given-names: Parth Krishan
       orcid: "https://orcid.org/0009-0004-8674-6002"
+      affiliation: "Maharaja Surajmal Institute of Technology, GGSIPU"
     - family-names: Arora
       given-names: Jyoti
+      affiliation: "Maharaja Agrasen Institute of Technology, GGSIPU"
+    - family-names: Indu
+      affiliation: "Maharaja Surajmal Institute of Technology, GGSIPU"
+  conference:
+    name: "9th International Conference on Pattern Analysis, Understanding and Learning (PAUL)"
   year: 2026
-  doi: "10.5281/zenodo.20084689"
+  status: in-press
+references:
+  - type: article
+    title: "A Head-to-Head Study of Ensemble and Deep Learning Algorithms for Flood Damage Prediction in Japan"
+    authors:
+      - family-names: Goswami
+        given-names: Parth Krishan
+      - family-names: Arora
+        given-names: Jyoti
+    year: 2026
+    status: preprint
+    doi: "10.5281/zenodo.20084689"
