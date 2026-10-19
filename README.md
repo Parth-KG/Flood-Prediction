@@ -42,14 +42,69 @@ RMSE and R², and the whole rolling-origin table. The other holdout rows come ou
 close but not identical: Random Forest 0.806 RMSE, the DNN 0.840 ± 0.003 and SVR
 0.863. SVR differs because the paper's final version widened its search to 60 iterations;
 that search and the paper's added checks (whole water systems held out, and paired
-significance tests) aren't in this repository yet.
+significance tests) aren't in this repository yet; their results are summarised below.
 
 **XGBoost and Random Forest are statistically indistinguishable.** They finish
 in the same order under both protocols, but the margin is meaningless: 0.0025
 RMSE on the holdout (Diebold–Mariano p = 0.45 in the paper) and 0.001 under rolling-origin,
-against a window-to-window standard deviation of 0.077. The separation that *is* stable is the one between
-the two tree ensembles and everything below them, which holds across all five
-windows and both protocols. Neither ensemble should be claimed as the winner.
+against a window-to-window standard deviation of 0.077. XGBoost has the lower RMSE in
+4 of the 5 windows. The separation that *is* stable is the one between the two tree
+ensembles and everything below them: the five models finish in the same order on the
+holdout, in the rolling-origin means and on held-out water systems, and the paper finds
+the DNN, SVR and linear regression significantly less accurate than XGBoost
+(p < 0.001). Neither ensemble should be claimed as the winner.
+
+### Further checks in the paper
+
+These come from the paper and can't yet be reproduced from this repository's code.
+
+**Unseen water systems.** Events were also split by water system with five-fold
+`GroupKFold`, so every test fold contains only basins the model never saw. RMSE, mean ±
+std across the five folds:
+
+| Model             | Unseen systems, all years | Unseen systems, 2013–2020 |
+|-------------------|---------------------------|---------------------------|
+| XGBoost           | **0.627 ± 0.064**         | **0.766 ± 0.090**         |
+| Random Forest     | 0.633 ± 0.062             | 0.778 ± 0.088             |
+| Deep Neural Net   | 0.641 ± 0.070             | 0.794 ± 0.109             |
+| SVR               | 0.731 ± 0.146             | 0.849 ± 0.110             |
+| Linear Regression | 0.831 ± 0.169             | 0.939 ± 0.108             |
+
+The ranking is the same as on the holdout. XGBoost keeps R² 0.39 (all years) and 0.29
+(2013–2020) on unseen systems, while linear regression falls below zero. One water
+system, `830303`, holds 45% of all events; holding it out alone gives XGBoost an RMSE of
+0.724 (all years) and 0.908 (2013–2020).
+
+**Significance.** On the 1,174 holdout events, each model's RMSE difference from XGBoost
+was bootstrapped twice: over events (5,000 resamples) and over whole water systems
+(2,000), since events from one system aren't independent. A two-sided Diebold–Mariano
+test was run on the per-event squared-error differences.
+
+| Compared with XGBoost | RMSE difference | 95% interval (events) | 95% interval (water systems) | Diebold–Mariano |
+|---|---|---|---|---|
+| Random Forest | 0.0025 | −0.004 to +0.009 | −0.007 to +0.020 | p = 0.45 |
+| Deep Neural Net | 0.034 | excludes zero | excludes zero | p < 0.001 |
+| SVR | 0.045 | excludes zero | excludes zero | p < 0.001 |
+| Linear Regression | 0.125 | excludes zero | excludes zero | p < 0.001 |
+
+**Identifier codes.** `wsysCd` and `rivCd` are near-duplicates (each river code is its
+water-system code with a river number appended; r > 0.999999999 after scaling), which
+gives the scaled training matrix a condition number of 4.9 × 10⁷. Target-encoding the two
+codes lifts linear regression's R² from 0.156 to 0.307 and SVR's from 0.295 to 0.335,
+while the tree ensembles barely move (holdout RMSE 0.811 for Random Forest, 0.807 for
+XGBoost). Neither baseline catches the ensembles under any treatment.
+
+**Population's lead is partly mechanical.** The target divides damage by population, so
+population is guaranteed some predictive power. Refitting XGBoost on total damage,
+`log10(damageObs)`, and ranking features by mean absolute SHAP value, population falls
+from 0.485 to 0.040 and catchment area becomes the strongest at 0.248. Population still
+carries information: dropping it lowers R² from 0.368 to 0.227. Catchment area beats
+every rainfall day in all three versions.
+
+**Extremes are compressed.** Every model pulls its predictions towards the middle.
+XGBoost over-predicts the smallest 10% of losses by 1.12 log units on average and
+under-predicts the largest 10% by 1.15; its predictions have 60% of the observed
+spread (36% for linear regression).
 
 ---
 
@@ -127,9 +182,11 @@ rolling_origin_evaluation(df, sel, TARGET, out_csv='results_rolling_origin.csv')
 
 ## Data
 
-Sourced from the Zenodo repository accompanying Wakai (2025), *"Historical
+Sourced from the Zenodo repository accompanying Wakai et al. (2025), *"Historical
 precipitation and flood damage in Japan: functional data analysis and evaluation
-of models"* — <https://doi.org/10.5281/zenodo.14015790>, CC-BY 4.0.
+of models"*, PLoS ONE 20(2), e0318335
+(<https://doi.org/10.1371/journal.pone.0318335>). Data deposit:
+<https://doi.org/10.5281/zenodo.14015790>, CC-BY 4.0.
 
 This analysis uses `DB_input+res_ptn02d14_logDmgPop.csv`:
 
@@ -227,6 +284,15 @@ fixed settings from `rolling_evaluation.py` (Random Forest with 300 trees; XGBoo
 with 300 trees, depth 5 and learning rate 0.05; SVR with C = 10), so the two
 tables compare slightly differently configured models.
 
+For Random Forest and XGBoost the holdout search here picks the same settings as the
+paper: Random Forest with 500 trees, maximum depth 10, `min_samples_split` 5,
+`min_samples_leaf` 2 and half the features per split; XGBoost with 300 rounds, depth 3,
+learning rate 0.05, subsample 0.6, `colsample_bytree` 1.0, `min_child_weight` 3 and L1
+and L2 penalties of 1.0. SVR differs. This repository searches a small grid and picks
+C = 500, γ = `auto`, ε = 0.2 (holdout RMSE 0.863). The paper ran a 60-iteration search
+over C from 0.1 to 10,000 and γ from 0.001 to 10 (both log-uniform) and ε from 0.01 to
+0.50, which settled on C = 437.6, γ = 0.338, ε = 0.19 (RMSE 0.850).
+
 ---
 
 ## Outputs
@@ -268,7 +334,7 @@ variation.
 
 ## Citation
 
-If you use this code, please cite the paper and the underlying dataset. The paper has no DOI
+If you use this code, please cite the paper, and the source study and its dataset. The paper has no DOI
 yet; until it does, the Zenodo preprint is the citable version.
 
 ```bibtex
@@ -293,6 +359,19 @@ yet; until it does, the Zenodo preprint is the citable version.
   url       = {https://github.com/Parth-KG/Flood-Prediction}
 }
 
+@article{wakai_plos_2025,
+  author    = {Wakai, A. and Hijioka, Y. and Yokozawa, M. and Watanabe, M.
+               and Sakurai, G.},
+  title     = {Historical precipitation and flood damage in Japan:
+               functional data analysis and evaluation of models},
+  journal   = {PLoS ONE},
+  volume    = {20},
+  number    = {2},
+  pages     = {e0318335},
+  year      = {2025},
+  doi       = {10.1371/journal.pone.0318335}
+}
+
 @dataset{wakai_2025,
   author    = {Wakai, A.},
   title     = {Historical precipitation and flood damage in Japan:
@@ -311,6 +390,6 @@ Code is released under the MIT License (see `LICENSE`).
 
 The dataset in `dataset/` is redistributed under
 [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/) and remains the work
-of Wakai (2025); attribution as above.
+of Wakai et al. (2025); attribution as above.
 
 ---
