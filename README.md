@@ -1,10 +1,12 @@
 # Flood Damage Prediction — Kanto Region, Japan
 
-Comparing five regression models on per-capita flood damage across 28 years of
-Kanto flood records (1993–2020), with time-aware validation throughout.
+Comparing five regression models on per-capita flood damage across Kanto flood
+records from 1993–2020, with time-aware validation throughout.
 
-Accompanies the manuscript *"A Head-to-Head Study of Ensemble and Deep Learning
-Algorithms for Flood Damage Prediction in Japan"* (under revision, PAUL 2026).
+Accompanies the paper *"A Head-to-Head Study of Ensemble and Deep Learning Algorithms
+for Flood Damage Prediction in Japan"* by Parth Krishan Goswami, Jyoti Arora and Indu,
+accepted at the 9th International Conference on Pattern Analysis, Understanding and Learning
+(PAUL 2026). An earlier version is on Zenodo as a preprint (see [Citation](#citation)).
 
 ---
 
@@ -30,19 +32,21 @@ Rolling-origin validation — five expanding windows, mean ± std across windows
 | SVR               | 0.795 ± 0.057     | 0.621 ± 0.052     | 0.277 ± 0.067     |
 | Linear Regression | 0.864 ± 0.063     | 0.679 ± 0.057     | 0.146 ± 0.081     |
 
-The DNN row is averaged over five random seeds; the other models are
-deterministic single fits.
+In the holdout table the DNN row is the mean ± std over five seeds; in the
+rolling-origin table each window's DNN prediction averages three seeds. The other
+models are deterministic single fits.
 
-The holdout table gives the figures in the revised manuscript (under revision,
-PAUL 2026). The code in this repository reproduces the XGBoost and linear
-regression holdout rows and the whole rolling-origin table (see
-`assets/run_log.txt`). The revision's wider SVR search (60 iterations) and its
-added checks, whole water systems held out and paired significance tests, will
-be added here after the review.
+The holdout table gives the figures in the accepted paper. This repository's
+own run (`assets/run_log.txt`) reproduces the linear regression row, XGBoost's
+RMSE and R², and the whole rolling-origin table. The other holdout rows come out
+close but not identical: Random Forest 0.806 RMSE, the DNN 0.840 ± 0.003 and SVR
+0.863. SVR differs because the paper's final version widened its search to 60 iterations;
+that search and the paper's added checks (whole water systems held out, and paired
+significance tests) aren't in this repository yet.
 
 **XGBoost and Random Forest are statistically indistinguishable.** They finish
 in the same order under both protocols, but the margin is meaningless: 0.0025
-RMSE on the holdout (Diebold–Mariano p = 0.45) and 0.001 under rolling-origin,
+RMSE on the holdout (Diebold–Mariano p = 0.45 in the paper) and 0.001 under rolling-origin,
 against a window-to-window standard deviation of 0.077. The separation that *is* stable is the one between
 the two tree ensembles and everything below them, which holds across all five
 windows and both protocols. Neither ensemble should be claimed as the winner.
@@ -50,6 +54,9 @@ windows and both protocols. Neither ensemble should be claimed as the winner.
 ---
 
 ## Quick start
+
+Requires Python 3.12; `requirements.txt` pins the exact versions behind the
+reported results.
 
 ```bash
 git clone https://github.com/Parth-KG/Flood-Prediction.git
@@ -73,7 +80,8 @@ python main.py 2>&1 | tee run_log.txt
 ```
 
 The rolling-origin evaluation can be run on its own in a couple of minutes,
-without regenerating the figures or the main comparison:
+without rerunning the main comparison (feature selection still rewrites its two
+figures):
 
 ```bash
 python -c "
@@ -105,10 +113,13 @@ rolling_origin_evaluation(df, sel, TARGET, out_csv='results_rolling_origin.csv')
 ├── dataset/
 │   ├── data/                  source CSVs (Zenodo, CC-BY 4.0)
 │   ├── data_structures.xlsx   variable dictionary
-│   └── readme.docx            dataset documentation
-├── assets/                    figures and results used in the manuscript,
+│   ├── readme.docx            the source dataset's own documentation
+│   └── README.md              what is here and which file this project uses
+├── assets/                    figures and results from a full run of this code,
 │                              including run_log.txt (the full pipeline log)
 ├── requirements.txt
+├── CITATION.cff
+├── LICENSE
 └── README.md
 ```
 
@@ -128,25 +139,29 @@ This analysis uses `DB_input+res_ptn02d14_logDmgPop.csv`:
 | Water systems | 75 |
 | River basins | 962 |
 | Period | 1993–2020 |
+| Years with events | 27 (none recorded in 2014) |
 | Missing values | none |
 | Duplicate rows | none |
 
 **Geographic coverage is regional, not national.** The 75 water systems fall
-into four code blocks — 45 under `12`, 11 under `14`, 12 under `80` and 7 under
-`83`. The dataset's own variable dictionary documents `wsysCd` only as "the code
-of water system" and does not publish the numbering scheme, so this README makes
-no claim about which prefectures those blocks correspond to. The source study
-describes its scope as the Kanto and Koshin regions. Results should not be
+into four code blocks — 45 under `12`, 12 under `08`, 11 under `14` and 7 under
+`83`. The dataset's variable dictionary documents `wsysCd` only as "the code of
+water system", but the first three blocks match the JIS prefecture codes for
+Chiba, Ibaraki and Kanagawa, and the `83` block holds seven nationally managed
+Class-A river systems (see `dataset/README.md`). The codes keep their leading zero
+in the CSV (`080001`); pandas drops it when it reads them as integers. The source
+study describes its scope as the Kanto and Koshin regions. Results should not be
 assumed to transfer to other parts of Japan.
 
-**Target variable:** `log₁₀(damageObs / population)` — observed monetary flood
-damage per resident, log-transformed. Per-capita rather than absolute damage,
+**Target variable:** `log10(dmgObs/pop)` — observed monetary flood damage per
+resident, log₁₀-transformed. Per-capita rather than absolute damage,
 so that small basins with high per-resident losses remain visible.
 
-Rainfall columns `0d`–`29d` are basin-averaged daily precipitation (mm/km²) for
-the thirty days preceding each event, `0d` being the day of the event itself.
+Rainfall columns `0d`–`29d` are basin-averaged daily precipitation (mm/km², as
+the source labels it) on the day of each event (`0d`) and each of the 29 days
+before it.
 
-Three columns are dropped before modelling: `log₁₀(dmgPred/pop)` (predictions
+Three columns are dropped before modelling: `log10(dmgPred/pop)` (predictions
 from the source study's own model), `damageObs` (the target's numerator — a
 direct leak), and `date` (used only for chronological sorting).
 
@@ -206,7 +221,11 @@ informative than either ranking alone.
 
 Scaling (`MinMaxScaler`) is fitted on training rows only, and refitted inside
 each rolling-origin window. Hyperparameters for Random Forest, XGBoost and SVR
-come from a 30-iteration `RandomizedSearchCV` using five-fold `TimeSeriesSplit`.
+come from a 30-iteration `RandomizedSearchCV` using five-fold `TimeSeriesSplit`
+in the holdout comparison. The rolling-origin windows skip that search and use
+fixed settings from `rolling_evaluation.py` (Random Forest with 300 trees; XGBoost
+with 300 trees, depth 5 and learning rate 0.05; SVR with C = 10), so the two
+tables compare slightly differently configured models.
 
 ---
 
@@ -225,10 +244,11 @@ Running `main.py` writes to the working directory:
 | `model_comparison_metrics.png` | metric bar chart |
 | `dnn_training_history.png` | DNN loss and MAE curves |
 
-All figures render at 300 dpi. Copies of the versions used in the manuscript are
-in `assets/`, together with `run_log.txt` — the console log of a full pipeline
-run, including the VIF table, both feature rankings, and the rolling-origin
-windows with their per-window row counts.
+All figures render at 300 dpi. `assets/` holds the outputs of one full run of
+this code, together with `run_log.txt` — the console log of that run, including
+the VIF table, both feature rankings, and the rolling-origin windows with their
+per-window row counts. Its holdout numbers are this repository's, not the
+paper's (see Results).
 
 ---
 
@@ -248,9 +268,20 @@ variation.
 
 ## Citation
 
-If you use this code, please cite the preprint and the underlying dataset:
+If you use this code, please cite the paper and the underlying dataset. The paper has no DOI
+yet; until it does, the Zenodo preprint is the citable version.
 
 ```bibtex
+@inproceedings{goswami_paul_2026,
+  author    = {Goswami, Parth Krishan and Arora, Jyoti and Indu},
+  title     = {A Head-to-Head Study of Ensemble and Deep Learning Algorithms
+               for Flood Damage Prediction in Japan},
+  booktitle = {9th International Conference on Pattern Analysis, Understanding
+               and Learning (PAUL)},
+  year      = {2026},
+  note      = {Accepted, to appear}
+}
+
 @misc{goswami_arora_2026,
   author    = {Goswami, Parth Krishan and Arora, Jyoti},
   title     = {A Head-to-Head Study of Ensemble and Deep Learning Algorithms
